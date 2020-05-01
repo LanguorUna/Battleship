@@ -4,22 +4,25 @@ class AbstractFactory{
     }
 }
 const factory = new AbstractFactory();
-
 class Field {
     constructor(){
+       this.clear();     
+    }
+
+    clear(){
         this.field = [
-                    [0,0,0,0,0,0,0,0,0,0],
-                    [0,0,0,0,0,0,0,0,0,0],
-                    [0,0,0,0,0,0,0,0,0,0],
-                    [0,0,0,0,0,0,0,0,0,0],
-                    [0,0,0,0,0,0,0,0,0,0],
-                    [0,0,0,0,0,0,0,0,0,0],
-                    [0,0,0,0,0,0,0,0,0,0],
-                    [0,0,0,0,0,0,0,0,0,0],
-                    [0,0,0,0,0,0,0,0,0,0],
-                    [0,0,0,0,0,0,0,0,0,0],
-                ];
-        this.ships = [];        
+            [0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0,0,0],
+        ];
+        this.ships = [];   
     }
 
     //определение ячейки для корабля
@@ -200,6 +203,14 @@ class Field {
 
         console.log(this);
     }
+
+    hasAlive(){
+        for (let i = 0; i < this.ships.length; i++) {
+            if(this.ships[i].status)
+                return true;
+        }
+    }
+
     //приватный
     randomInteger(min, max) {
         // случайное число от min до (max+1)
@@ -211,33 +222,42 @@ class Field {
 class UserField extends Field{
 
     drawField(){
-        const UserField = document.querySelector('.UserField');
-        let row = '';
+        const UserField = document.querySelector('.field__User');
+        let rows = '';
 
         for (let i = 0; i < 10; i++) {
-            row += '<tr>';
-
+            rows += `<tr class="field__row ${(i % 2)== 0 ?'field__row__even':'' }">`;
             for (let j = 0; j < 10; j++) {
 
-                if(this.field[i][j] == 1){
-                    row += `<td>${this.drawShips(i,j)}</td>`;
-                }
-                else {
-                    row += `<td>${this.field[i][j]}</td>`;
-                }
+                rows += '<td><div class="ship ship__type-0"></div></td>';
             }
-            row += '</tr>' 
+            rows += '</tr>' 
         }
-        UserField.innerHTML = row;
+        UserField.innerHTML = rows;
+        this.drawShips(UserField); 
 
     }
-    drawShips(x,y){
-        for (let i = 0; i < 10; i++) {
-             if(this.ships[i].сheckСoordinates(x,y)){
-                 return this.ships[i].drawShip();
-             }
+    drawShips(table){
+        for (let i = 0; i < this.ships.length; i++) {
+            this.ships[i].draw(table);
         }    
     
+    }
+}
+class BotField extends Field{
+    drawField(){
+        const UserField = document.querySelector('.field__Bot');
+        let rows = '';
+
+        for (let i = 0; i < 10; i++) {
+            rows += `<tr class="field__row ${(i % 2)== 0 ?'field__row__even':'' }">`;
+            for (let j = 0; j < 10; j++) {
+
+                rows += '<td><div class="ship ship__type-0"></div></td>';
+            }
+            rows += '</tr>' 
+        }
+        UserField.innerHTML = rows;
     }
 }
 class Ship {
@@ -311,12 +331,67 @@ class Ship {
         return false;
     }
 
-    drawShip(){
+    draw(table){
+        for (let i = this.startX; i <= this.endX; i++) {
+            for (let j = this.startY; j <= this.endY; j++) {
+                table.rows[i].cells[j].innerHTML = this.render();     
+            }                    
+        }   
+    }
+
+    render(){
         return `<div class="ship ship__type-${this.type}"></div>`;
     }
 }
-   
-    let userField = new UserField();
-    userField.сompletion();
-    //userField.checkShotField(3,5);
-    userField.drawField();
+
+class Game{
+    constructor(userName){
+        this.userField = new UserField();
+        this.botField = new BotField();
+
+        this.currentPlayer = 'user';
+        this.userName = userName;
+    }
+
+    prepareFields(){
+        this.userField.clear();
+        this.botField.clear();
+
+        this.userField.сompletion();
+        this.botField.сompletion();
+
+        this.userField.drawField();
+        this.botField.drawField();
+
+        this.currentPlayer = 'user';
+    }
+
+    step(x,y){
+        const field = this.currentPlayer == 'user'? this.botField : this.userField;
+        
+        field.checkShotField(x,y);
+        if(!field.hasAlive()){
+            this.end();
+        }
+        this.currentPlayer = this.currentPlayer == 'user'? 'bot' : 'user';
+        
+        if(this.currentPlayer == "bot"){
+            this.stepBot();
+        }
+    }
+
+    stepPlayer(){
+
+    }
+
+    stepBot(){
+        //проверка на повторное попадание, рандом
+        this.step(x,y)
+    }
+    end(){
+
+    }
+
+}
+    const game = new Game('kek');
+    game.prepareFields();

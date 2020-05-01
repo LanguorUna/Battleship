@@ -1,20 +1,41 @@
-.UserField{
-
+body{
+display: flex;
+justify-content: center;
+}
+.wrapper{
+    width: 900px;
+    display: flex;
+    justify-content: space-around;
+}
+.field{
+    display: block;
+    background-color:white;
+    border: 2px solid gray;
 }
 .ship{
     display: block;
-    width: 10px;
-    height: 10px;
+    width: 28px;
+    height: 28px;
+    border-radius: 5px;
+}
+.field__row{
+    background-color: #c0e1fc;
+}
+.field__row__even{
+    background-color: #cffafa;
+}
+.ship__type-0{
+
 }
 .ship__type-1{
-    background-color: red;
+    background-color: seagreen;
 }
 .ship__type-2{
-    background-color: rosybrown;
+    background-color: teal;
 }
 .ship__type-3{
-    background-color: saddlebrown;
+    background-color:royalblue;
 }
 .ship__type-4{
-    background-color: seagreen;
+    background-color: midnightblue;
 }
