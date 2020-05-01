@@ -69,8 +69,44 @@ class Field {
                 return false; 
             }                       
         }
-        return true;
+
+        if(this.checkBounds(row, column, row + type -1, column)){
+            return true;
+        } 
+        
+        return false;
     }
+
+    checkBounds(startX,startY,endX,endY){
+        startX -= 1;
+        startY -= 1;
+
+        endX += 1;
+        endY += 1;
+
+        if(startX < 0)
+            startX = 0;
+
+        if(startY < 0) 
+            startY = 0;
+
+        if( endX > 9) 
+            endX = 9;
+
+        if(endY > 9) 
+            endY = 9;
+
+        for (let i = startX; i <= endX; i++) {
+            for (let j = startY; j <= endY; j++) {
+                if( this.field[i][j] == 1){  
+                    return false;
+                }
+            }
+        }
+        return true;
+
+    }
+
     //Проврека положения корабля по строке 
     determineHorizontalDirection(row,column,type){
         let length = column + type - 1;
@@ -81,7 +117,11 @@ class Field {
                 return false;
             }                        
         }
-        return true;
+        if(this.checkBounds(row, column, row , column + type -1)){
+            return true;
+        } 
+        
+        return false;
     }
     //Разметка поля
     MarkeField(ship){
@@ -92,16 +132,16 @@ class Field {
         let squareEndX = ship.endX;
         let squareEndtY = ship.endY;
 
-        if(ship.startX != 0)
+        if(ship.startX > 0)
             squareStartX -= 1;
 
-        if(ship.startY != 0) 
+        if(ship.startY > 0) 
             squareStartY -= 1;
 
-        if(ship.endX != 9) 
+        if(ship.endX < 9) 
             squareEndX += 1;
 
-        if(ship.endY != 9) 
+        if(ship.endY < 9) 
             squareEndtY += 1;
 
         for (let i = squareStartX; i <= squareEndX; i++) {
@@ -168,6 +208,38 @@ class Field {
     }
 }
 
+class UserField extends Field{
+
+    drawField(){
+        const UserField = document.querySelector('.UserField');
+        let row = '';
+
+        for (let i = 0; i < 10; i++) {
+            row += '<tr>';
+
+            for (let j = 0; j < 10; j++) {
+
+                if(this.field[i][j] == 1){
+                    row += `<td>${this.drawShips(i,j)}</td>`;
+                }
+                else {
+                    row += `<td>${this.field[i][j]}</td>`;
+                }
+            }
+            row += '</tr>' 
+        }
+        UserField.innerHTML = row;
+
+    }
+    drawShips(x,y){
+        for (let i = 0; i < 10; i++) {
+             if(this.ships[i].сheckСoordinates(x,y)){
+                 return this.ships[i].drawShip();
+             }
+        }    
+    
+    }
+}
 class Ship {
     constructor(type) {
         this.type = type < 1 ? 1 : type;
@@ -176,7 +248,7 @@ class Ship {
         this.shotcounter = 0;
         this.status = true;
 
-        this.endX = this.startX + type;
+        this.endX = this.startX + type -1;
         this.endY = 0;
     }
     //задаём координаты коробля на поле
@@ -203,25 +275,17 @@ class Ship {
         if(this.startY != this.endY){
             return 'horizontal'
         }
+        return 'horizontal'
     }
     //проверка выстрела
     сheckShot(shotX,shotY){
-        if(this.direction == 'vertical'){
-            if((shotY >= this.startY) && (shotY <= this.endY)){
-                this.сheckDeath();
-                return true;
-            }
-        }
-
-        if(this.direction == 'horizontal'){
-            if((shotX >= this.startX) && (shotX <= this.endX)){
-                this.сheckDeath();
-                return true;
-            }
+        if(this.сheckСoordinates(shotX, shotY)){
+            this.сheckDeath();
+            return true;
         }
         return false;
     }
-    //проверка выстрела
+    //проверка на уничтожение
     сheckDeath(){
         this.shotcounter += 1;
         if(this.shotcounter == this.type){
@@ -231,8 +295,28 @@ class Ship {
         return false;
     }
 
+    сheckСoordinates(x,y){
+
+        if(this.direction == 'horizontal'){
+            if((y >= this.startY) && (y <= this.endY) && (x == this.startX)){
+                return true;
+            }
+        }
+
+        if(this.direction == 'vertical'){
+            if((x >= this.startX) && (x <= this.endX) && (y == this.startY)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    drawShip(){
+        return `<div class="ship ship__type-${this.type}"></div>`;
+    }
 }
    
-    let userField = new Field();
+    let userField = new UserField();
     userField.сompletion();
-    userField.checkShotField(3,5);
+    //userField.checkShotField(3,5);
+    userField.drawField();

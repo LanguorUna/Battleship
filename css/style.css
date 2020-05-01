@@ -1,0 +1,20 @@
+.UserField{
+
+}
+.ship{
+    display: block;
+    width: 10px;
+    height: 10px;
+}
+.ship__type-1{
+    background-color: red;
+}
+.ship__type-2{
+    background-color: rosybrown;
+}
+.ship__type-3{
+    background-color: saddlebrown;
+}
+.ship__type-4{
+    background-color: seagreen;
+}
