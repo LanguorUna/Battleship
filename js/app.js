@@ -83,8 +83,8 @@ class Field {
         }
         return true;
     }
-
-    MarkingField(ship){
+    //Разметка поля
+    MarkeField(ship){
 
         let squareStartX = ship.startX;
         let squareStartY = ship.startY;
@@ -129,13 +129,33 @@ class Field {
         }  
        
     }
+    //проверка выстрела на поле
+    checkShotField(shotX,shotY){
+        let status = false; 
 
+        for (let i = 0; i < 10; i++) {
+           if(this.ships[i].сheckShot(shotX,shotY)){
+            
+                status = this.ships[i].сheckShot(shotX,shotY) ;
+           }
+        }
+        this.markingShot(status,shotX,shotY)  
+        
+    }
+    //помечаем где был выстрел на поле
+    markingShot(status,shotX,shotY){
+        if(status){
+            this.field[shotX][shotY] = 4;
+        }
+        else this.field[shotX][shotY] = 3;
+    }
+    //заполнение поля
     сompletion(){
         const typeShips = [4,3,3,2,2,2,1,1,1,1]
         for (let i = 0; i < 10; i++) {
             this.ships[i] = factory.create(Ship,typeShips[i]);
             this.setShipPosition(this.ships[i]);
-            this.MarkingField(this.ships[i]);                    
+            this.MarkeField(this.ships[i]);                    
         }
 
         console.log(this);
@@ -153,11 +173,13 @@ class Ship {
         this.type = type < 1 ? 1 : type;
         this.startX = 0;
         this.startY = 0;
+        this.shotcounter = 0;
+        this.status = true;
 
         this.endX = this.startX + type;
         this.endY = 0;
     }
-
+    //задаём координаты коробля на поле
     setPosition(startX,startY,direction){
         this.startX = startX;
         this.startY = startY;
@@ -172,6 +194,7 @@ class Ship {
             this.endY = this.startY + this.type -1;
         }
     }
+    //определение направления корабля
     get direction(){
         if(this.startX != this.endX){
             return 'vertical'
@@ -181,9 +204,35 @@ class Ship {
             return 'horizontal'
         }
     }
+    //проверка выстрела
+    сheckShot(shotX,shotY){
+        if(this.direction == 'vertical'){
+            if((shotY >= this.startY) && (shotY <= this.endY)){
+                this.сheckDeath();
+                return true;
+            }
+        }
+
+        if(this.direction == 'horizontal'){
+            if((shotX >= this.startX) && (shotX <= this.endX)){
+                this.сheckDeath();
+                return true;
+            }
+        }
+        return false;
+    }
+    //проверка выстрела
+    сheckDeath(){
+        this.shotcounter += 1;
+        if(this.shotcounter == this.type){
+            this.status = false;
+            return true;
+        }
+        return false;
+    }
 
 }
    
     let userField = new Field();
-    //userField.field[0][0] = 5;
     userField.сompletion();
+    userField.checkShotField(3,5);
