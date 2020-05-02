@@ -345,12 +345,11 @@ class Ship {
 }
 
 class Game{
-    constructor(userName){
+    constructor(){
         this.userField = new UserField();
         this.botField = new BotField();
 
         this.currentPlayer = 'user';
-        this.userName = userName;
     }
 
     prepareFields(){
@@ -391,7 +390,34 @@ class Game{
     end(){
 
     }
-
 }
-    const game = new Game('kek');
+const game = new Game();
+
+function start(event){
+    const input = document.querySelector('.form-input');
+    const form = document.querySelector('.form');
+
+    const name = document.querySelector('.name');
+    
+    const fieldUser = document.querySelector('.field__User');
+    const fieldBot = document.querySelector('.field__Bot');
+
+    const button = document.querySelector('.button__restart');
+
+    form.style.display = "none";
+    fieldUser.style.display = "block";
+    fieldBot.style.display = "block";
+
+    button.style.display = "block";
+
+    name.style.display = "block";
+    name.textContent = input.value;
+
     game.prepareFields();
+}
+
+function restart(){
+    game.prepareFields();
+}
+
+
