@@ -3,22 +3,29 @@
     <head>
         <meta charset="utf-8">
         <title>Морской бой</title>
-        <link rel="stylesheet" href="css/style.css"> 
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="css/style.css">
+        <script src="/js/Ship.js"></script> 
+        <script src="/js/Field.js"></script>
+        <script src="/js/UserField.js"></script>
+        <script src="/js/BotField.js"></script>
+        <script src="/js/Game.js"></script>
     </head>
     <body>
+        <div class="caption">Морской бой</div>
         <div class="wrapper">
             <form class="form">
-                <legend class="form-legend">Морской бой</legend>
+                <legend class="form-legend">Укажите имя, чтобы начать игру</legend>
                 <div class="form-content"> 
-                    <label for="name" class="form-label" >Имя:</label>
-                    <input type="text" id="name" class="form-input">
+                    <label for="name" class="form-label" >Имя</label>
+                    <input type="text" id="name" class="form-input" maxlength="100">
                 </div> 
-                <div class="button" onclick="start()">Играть</div>
+                <div class="button">Играть</div>
             </form>
             <div class="name"></div>
             <table class="field field__User"></table>
             <table class="field field__Bot"></table>
-            <div class="button button__restart" onclick="restart()">Начать заново</div>
+            <div class="button button__restart">Начать заново</div>
         </div>
         <script src="/js/app.js"></script>
     </body>
